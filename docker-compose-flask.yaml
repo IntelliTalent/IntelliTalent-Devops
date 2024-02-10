@@ -1,0 +1,21 @@
+version: "3"
+services:
+  cover-letter:
+    container_name: cover-letter-generator
+    build:
+      context: ../flask-services
+      dockerfile: .\dockerfile.dev
+      args:
+        - APP=cover-letter-generator
+    image: clg:latest
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    networks:
+      - intelli-network
+    volumes:
+      - /shared:/usr/src/app/
+
+networks:
+  intelli-network:
+    external: true

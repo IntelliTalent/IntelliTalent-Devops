@@ -70,9 +70,24 @@ services:
     env_file:
       - ../.env
 
+
+  redis:
+    image: redis:latest
+    restart: always
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-database:/root/redis
+    env_file:
+      - ../.env
+
+
+
 volumes:
   postgres-data:
   ferwmongodb-dataaaqw:
+  redis-database:
 
 
 networks:

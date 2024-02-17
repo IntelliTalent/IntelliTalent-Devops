@@ -1,0 +1,35 @@
+# globalconfig.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: globalconfig
+data:
+  NODE_ENV: development
+  APP_BASE_URL: none
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_USERNAME: postgres
+  DB_PASSWORD: postgres
+  AUTHDB: authdb
+  USERSDB: usersdb
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_MULTIPLE_DATABASES: "${AUTHDB}, ${USERSDB}"
+  PGADMIN_DEFAULT_EMAIL: waer@gmail.com
+  PGADMIN_DEFAULT_PASSWORD: postgres
+  JWT_SECRET: secret
+  JWT_EXPIRATION: 15d
+  BCRYPT_SALT: '12'
+  RABBITMQ_DEFAULT_USER: user
+  RABBITMQ_DEFAULT_PASS: password
+  RABBITMQ_USER: user
+  RABBITMQ_PASS: password
+  RABBITMQ_HOST: rabbitmq
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_AUTH_QUEUE: auth_queue
+  RABBITMQ_USERS_QUEUE: users_queue
+  RABBITMQ_COVER_LETTER_QUEUE: cover_letter_queue
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_USERNAME: default
+  REDIS_PASS: password

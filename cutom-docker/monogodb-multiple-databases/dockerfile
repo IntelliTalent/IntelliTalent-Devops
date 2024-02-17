@@ -1,0 +1,7 @@
+# Dockerfile
+
+FROM mongo
+
+# Copy initialization script into the container
+COPY ./init-mongo.js /docker-entrypoint-initdb.d/
+

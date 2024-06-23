@@ -39,3 +39,4 @@ db/*
 monitoring/data/*
 
 .env
+.env.*

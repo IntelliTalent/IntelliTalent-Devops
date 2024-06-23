@@ -1,0 +1,100 @@
+---
+- name: Configure Servers
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+
+    ####################### Installing Docker (Debian) ###########################
+    - name: Check if Docker is installed
+      ansible.builtin.stat:
+        path: /usr/bin/docker
+      register: docker_installed
+
+    - name: Download the compatibility script (Debian)
+      get_url:
+        url: "https://releases.rancher.com/install-docker/{{ docker_version }}.sh"
+        dest: "/tmp/compatibility_script.sh"
+        mode: "0755"
+      when: not docker_installed.stat.exists
+
+
+    - name: Execute the compatibility script (Debian)
+      command: "/tmp/compatibility_script.sh"
+      register: compatibility_script_output
+      async: 600
+      when: not docker_installed.stat.exists
+
+
+    - name: Add user to the docker group (Debian)
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+        state: present
+      when: not docker_installed.stat.exists
+
+    ####################### Jenkins ###########################
+    - name: Ensure jenkins directory on docker host
+      file:
+        state: directory
+        owner: "1000"
+        group: "1000"
+        path: /share/jenkins
+
+    - name: Pull the latest official jenkins docker image
+      community.docker.docker_image:
+        name: "jenkins/jenkins:lts"
+        source: pull
+
+    - name: copy jenkins image
+      become: true
+      copy:
+        src: "{{ local_directory }}/DockerFiles/Dockerfile"
+        dest: "{{ dest_directory }}/JenkinsDockerFile/"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Build Jenkins Docker Image
+      docker_image:
+        build:
+          path: "{{ dest_directory }}/JenkinsDockerFile/"
+        name: docker_jenkins
+        tag: v1
+        source: build
+
+    - name: check permission of docker socke
+      ansible.builtin.file:
+        path: /var/run/docker.sock
+        owner: "root"
+        group: "root"
+        mode: '0666'
+
+    - name: Create Docker Jenkins Container
+      docker_container:
+        name: jenkins
+        image: docker_jenkins:v1
+        ports:
+        - "8080:8080"
+        - "50000:50000"
+        volumes:
+        - "jenkins_home:/var/jenkins_home"
+        - "/var/run/docker.sock:/var/run/docker.sock"
+        - "{{ dest_directory }}:{{ dest_directory }}"
+        - /usr/bin/docker:/usr/bin/docker
+        state: started
+        restart_policy: always
+
+    - name: copy the .env file
+      copy:
+        src: "{{ local_directory }}/.env.prod"
+        dest: "{{ dest_directory }}/.env"
+        owner: root
+        group: root
+        mode: '0644'
+
+
+
+
+# ansible-playbook -i /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/inventory.yml  /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/configure.vm.yml

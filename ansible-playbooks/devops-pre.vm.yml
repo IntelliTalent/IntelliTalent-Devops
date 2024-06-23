@@ -1,0 +1,50 @@
+---
+- name: install devops prequisites
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+
+  - name: Clone a private repository using username and token
+    ansible.builtin.git:
+      repo: 'https://{{ github_username }}:{{ github_token }}@github.com/IntelliTalent/IntelliTalent-Devops.git'
+      dest: '{{ dest_directory }}/devops'
+      accept_hostkey: yes
+      update: yes
+      version: master
+
+
+  - name: Install required system packages
+    ansible.builtin.package:
+      name:
+        - python3-pip
+        - docker.io
+      state: present
+      update_cache: yes
+
+  - name: Ensure pip3 is installed
+    ansible.builtin.package:
+      name: python3-pip
+      state: present
+
+  - name: Install Docker SDK for Python
+    ansible.builtin.pip:
+      name: docker
+      executable: pip3
+
+  - name: Install Docker Compose Python module
+    ansible.builtin.pip:
+      name: docker-compose
+      executable: pip3
+
+  - name: Run docker-compose up in the devops directory
+    community.docker.docker_compose:
+      project_src: '{{ dest_directory }}/devops'
+      files:
+        - docker-compose-pre.yaml
+      services:
+        - postgres
+      state: present
+      build: yes
+
+# ansible-playbook -i /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/inventory.yml  /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/devops-pre.vm.yml

@@ -1,3 +1,5 @@
 docker_version: "23.0"
 local_directory: "/mnt/d/computer_engineering/projects/gp/intelli-talent-devops"
 dest_directory: "/intelli"
+github_username: username"
+github_token: "token"

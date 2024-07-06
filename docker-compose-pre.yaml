@@ -33,6 +33,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - global-network
+    restart: unless-stopped
 
   postgres_admin:
     image: dpage/pgadmin4
@@ -82,7 +83,29 @@ services:
     env_file:
       - ../.env
 
+  web_server:
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - Readit
+    restart: always
+    depends_on:
+      - frontend
+      - backend
+      - flutterweb
+    volumes:
+      - /intella/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /intella/certbot/www/:/var/www/certbot/:ro
+      - /intella/certbot/conf/:/etc/nginx/ssl/:ro
 
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - /intella/certbot/conf/:/etc/letsencrypt/
+      - /intella/certbot/www/:/var/www/certbot/
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email elwaeryousef@gmail.com -d www.intelli-talent.tech --agree-tos
 
 volumes:
   postgres-data:

@@ -47,4 +47,4 @@
       state: present
       build: yes
 
-# ansible-playbook -i /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/inventory.yml  /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/devops-pre.vm.yml
+# ansible-playbook -i ./ansible-playbooks/inventory.yml  ./ansible-playbooks/devops-pre.vm.yml

@@ -94,7 +94,38 @@
         group: root
         mode: '0644'
 
+    - name: copy frontend env file
+      copy:
+        src: "{{ local_directory }}/.env.front"
+        dest: "{{ dest_directory }}/.env.front"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: copy testing backend env file
+      copy:
+        src: "{{ local_directory }}/.env.test"
+        dest: "{{ dest_directory }}/.env.test"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: copy the domain folder to the server
+      copy:
+        src: "{{ local_directory }}/domain"
+        dest: "{{ dest_directory }}/"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: copy the docker-compose file to the server
+      copy:
+        src: "{{ local_directory }}/docker-compose-frontend.yaml"
+        dest: "{{ dest_directory }}/docker-compose-frontend.yaml"
+        owner: root
+        group: root
+        mode: '0644'
 
 
 
-# ansible-playbook -i /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/inventory.yml  /mnt/d/computer_engineering/projects/gp/intelli-talent-devops/ansible-playbooks/configure.vm.yml
+# ansible-playbook -i ./ansible-playbooks/inventory.yml  ./ansible-playbooks/configure.vm.yml
